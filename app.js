@@ -13,7 +13,7 @@ var commentRoutes = require("./routes/comments");
 var campgroundRoutes = require("./routes/campgrounds");
 var authRoutes = require("./routes/index");
 var methodOverride = require("method-override");
-mongoose.connect("mongodb+srv://binhthaitrinh:<Kakak2k@>@cluster0-i4sco.mongodb.net/yelp_camp?retryWrites=true");
+
 
 app.use(methodOverride("_method"));
 app.use(flash());
@@ -49,7 +49,25 @@ app.use(authRoutes);
 app.use("/campgrounds/:id/comments", commentRoutes);
 app.use("/campgrounds", campgroundRoutes);
 
+// const MongoClient = require("mongodb").MongoClient;
+// const uri = "mongodb+srv://trinhthaibinh.ecom@gmail.com:<Kakak2k%40>@cluster0-i4sco.mongodb.net/test?retryWrites=true";
+// const client = new MongoClient(uri, { useNewUrlParser: true });
+// client.connect(err => {
+//   const collection = client.db("test").collection("devices");
+//   // perform actions on the collection object
+//   client.close();
+// });
 
+const MongoClient = require('mongodb').MongoClient;
+const uri = "mongodb+srv://binhthaitrinh:<Kakakak2>@cluster0-xvvnh.mongodb.net/test?retryWrites=true";
+const client = new MongoClient(uri, { useNewUrlParser: true });
+client.connect(err => {
+  const collection = client.db("test").collection("devices");
+  // perform actions on the collection object
+  client.close();
+});
+
+// mongoose.connect("mongodb+srv://binhthaitrinh:<Kakakak2>@cluster0-xvvnh.mongodb.net/test?retryWrites=true", {useNewUrlParser: true});
 // mongoose.connect('mongodb://localhost/yelp_camp_4', {useNewUrlParser: true});
 
 // var campgrounds = [
