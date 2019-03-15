@@ -50,7 +50,7 @@ app.use("/campgrounds/:id/comments", commentRoutes);
 app.use("/campgrounds", campgroundRoutes);
 
 
-mongoose.connect('mongodb://localhost/yelp_camp_4', {useNewUrlParser: true});
+// mongoose.connect('mongodb://localhost/yelp_camp_4', {useNewUrlParser: true});
 
 // var campgrounds = [
 // 	{name: "Salcom Creek", image:"https://stmed.net/sites/default/files/tengen-toppa-gurren-lagann-wallpapers-26134-4316625.jpg"},
