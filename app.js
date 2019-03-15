@@ -13,7 +13,7 @@ var commentRoutes = require("./routes/comments");
 var campgroundRoutes = require("./routes/campgrounds");
 var authRoutes = require("./routes/index");
 var methodOverride = require("method-override");
-
+mongoose.connect("mongodb+srv://binhthaitrinh:<password>@cluster0-i4sco.mongodb.net/yelp_camp?retryWrites=true");
 
 app.use(methodOverride("_method"));
 app.use(flash());
