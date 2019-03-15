@@ -57,8 +57,8 @@ app.use("/campgrounds", campgroundRoutes);
 //   // perform actions on the collection object
 //   client.close();
 // });
-
-mongoose.connect("mongodb+srv://binhthaitrinh:Kakakak2@cluster0-xvvnh.mongodb.net/test?retryWrites=true", {useNewUrlParser: true});
+var url = process.env.DATABASEURL || "mongodb://localhost/yelp_camp_4";
+mongoose.connect(url, {useNewUrlParser: true});
 
 // mongoose.connect("mongodb+srv://binhthaitrinh:<Kakakak2>@cluster0-xvvnh.mongodb.net/test?retryWrites=true", {useNewUrlParser: true});
 // mongoose.connect('mongodb://localhost/yelp_camp_4', {useNewUrlParser: true});
