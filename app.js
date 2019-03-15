@@ -58,14 +58,7 @@ app.use("/campgrounds", campgroundRoutes);
 //   client.close();
 // });
 
-const MongoClient = require('mongodb').MongoClient;
-const uri = "mongodb+srv://binhthaitrinh:<Kakakak2>@cluster0-xvvnh.mongodb.net/test?retryWrites=true";
-const client = new MongoClient(uri, { useNewUrlParser: true });
-client.connect(err => {
-  const collection = client.db("test").collection("devices");
-  // perform actions on the collection object
-  client.close();
-});
+mongoose.connect("mongodb+srv://binhthaitrinh:Kakakak2@cluster0-xvvnh.mongodb.net/test?retryWrites=true", {useNewUrlParser: true});
 
 // mongoose.connect("mongodb+srv://binhthaitrinh:<Kakakak2>@cluster0-xvvnh.mongodb.net/test?retryWrites=true", {useNewUrlParser: true});
 // mongoose.connect('mongodb://localhost/yelp_camp_4', {useNewUrlParser: true});
