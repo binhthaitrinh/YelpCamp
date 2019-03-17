@@ -7,6 +7,17 @@ var methodOverride = require("method-override");
 router.use(methodOverride("_method"));
 var middleware = require("../middleware"); //special name: index.js. So don't need index.js after middleware/
 
+var NodeGeocoder = require("node-geocoder");
+var options = {
+	provider: "google",
+	httpAdapter: "https",
+	apiKey: "AIzaSyCm1N_zK6G8romD92bWh1bJ82WlNhcTcVo",
+	formatter: null
+};
+
+var geocoder = NodeGeocoder(options);
+
+
 //INDEX - show all campgrounds
 router.get("/", function(req, res) {
 	
@@ -30,22 +41,34 @@ router.post("/", middleware.isLoggedIn, function(req, res) {
 	var author = {
 		id: req.user._id,
 		username: req.user.username
-	}
+	};
 	var price = req.body.price;
-	var newCampground = {name: name, image: image, description: desc, author: author, price: price};
-	// Create a new campground an d save to DB
-	Campground.create(newCampground, function(err, newlyCreated) {
-		if (err) {
-			console.log(err);
+	console.log(req.body.location);
+	geocoder.geocode(req.body.location, function(err, data) {
+		console.log(data);
+		if (err || !data.length) {
+			req.flash("error", "Invalid address");
+			return res.redirect("back");
 		}
-		else {
-			res.redirect("campgrounds");
-		}
+		var lat = data[0].latitude;
+		var lng = data[0].longitude;
+		var location = data[0].formattedAddress;
+		var newCampground = {name: name, image: image, description: desc, author: author, price: price, location: location, lat: lat, lng: lng};
+	
+		// Create a new campground an d save to DB
+		Campground.create(newCampground, function(err, newlyCreated) {
+			if (err) {
+				console.log(err);
+			}
+			else {
+				res.redirect("campgrounds");
+			}
+		});
 	});
-	// campgrounds.push(newCampground);
-	// get data from form and add to campground array
-	// redirect back to campgrounds page
-	// res.redirect("campgrounds");
+		// campgrounds.push(newCampground);
+		// get data from form and add to campground array
+		// redirect back to campgrounds page
+		// res.redirect("campgrounds");
 });
 
 //NEW - show form to create new campground
@@ -87,15 +110,26 @@ router.get("/:id/edit", middleware.checkCampgroundOwnership, function(req, res) 
 
 // UPDATE COMPGROUND ROUTE
 router.put("/:id", middleware.checkCampgroundOwnership, function(req, res) {
-	//find and update correct campground
-	Campground.findByIdAndUpdate(req.params.id, req.body.campground, function(err, updatedCampground) {
+	geocoder.geocode(req.body.location, function(err, data) {
+		if (err || !data.length) {
+			req.flash("error", "Invalid address");
+			return res.redirect("back");
+		}
+		req.body.campground.lat = data[0].latitude;
+		req.body.campground.lng = data[0].longtitude;
+		Campground.findByIdAndUpdate(req.params.id, req.body.campground, function(err, updatedCampground) {
 		if (err) {
+			req.flash("error", err.message);
 			res.redirect("/campgrounds");
 		}
 		else {
+			req.flash("success", "Successfully Updated!");
 			res.redirect("/campgrounds/" + req.params.id);
 		}
+		});
 	});
+	//find and update correct campground
+	
 	//redirect somewhere
 });
 

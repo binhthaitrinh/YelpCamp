@@ -13,7 +13,7 @@ middlewareObj.checkCampgroundOwnership = function(req, res, next) {
 			}
 			else {
 				//does user own campground?
-				if (foundCampground.author.id.equals(req.user._id)) {
+				if ((foundCampground.author.id.equals(req.user._id)) || (req.user.isAdmin)) {
 					next();
 				}
 				//else, redirect
@@ -39,7 +39,7 @@ middlewareObj.checkCommentOwnership = function(req, res, next) {
 			}
 			else {
 				//does user own campground?
-				if (foundComment.author.id.equals(req.user._id)) {
+				if ((foundComment.author.id.equals(req.user._id)) || (req.user.isAdmin)) {
 					next();
 				}
 				//else, redirect
@@ -61,7 +61,12 @@ middlewareObj.isLoggedIn = function(req, res, next) {
 	if (req.isAuthenticated()) {
 		return next();
 	}
+	console.log(req.originalUrl);
+
+	req.session.redirectTo = req.originalUrl;
+	console.log(req.session.redirectTo);
 	req.flash("error", "You need to be logged in first");
+
 	res.redirect("/login");
 };
 

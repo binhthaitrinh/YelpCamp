@@ -24,8 +24,13 @@ router.get("/register", function(req, res) {
 	res.render("register");
 });
 
+// handle sign up logic
 router.post("/register", function(req, res) {
 	var newUser = new User({username: req.body.username});
+	
+	if (req.body.adminCode === "secretcode123") {
+		newUser.isAdmin = true;
+	}
 	User.register(newUser, req.body.password, function(err, user) {
 		if(err){
 			req.flash("error", err.message);
@@ -45,13 +50,49 @@ router.get("/login", function(req, res) {
 
 //handling login logic
 //app.post("/login", middleware, callback);
-router.post("/login", passport.authenticate("local", 
-	{
-		successRedirect: "/campgrounds",
-		failureRedirect: "/login"
-	}), function(req, res) {
-		// req.flash("success", "Welcome" + req.body.username);
+// router.post("/login", passport.authenticate("local", 
+// 	{
+// 		successRedirect: "/campgrounds",
+// 		failureRedirect: "/login",
+// 		successFlash: "Welcome"
+// 	}), function(req, res) {
+// 		// req.flash("success", "Welcome" + req.body.username);
+
+// });
+
+router.post("/login", function(req, res, next) {
+	passport.authenticate("local", function(err, user, info) {
+		// set req.session.redirectTo here if you want to redirect somewhere
+		// req.session.redirectTo = "/";
+		
+		console.log(req.path);
+		if (err) {
+			return next(err);
+		}
+		if (!user) {
+			req.flash("error", "Invalid username or password");
+			return res.redirect("/login");
+		}
+		req.logIn(user, function(err) {
+			if (err) {
+				return next(err);
+			}
+			console.log(req.session.redirectTo);
+			// let redirectTo = null;
+			// if (req.session.redirectTo) {
+			// 	redirectTo = req.session.redirectTo;
+			// }
+			// else {
+			// 	redirectTo = "campgrounds";
+			// }
+			let redirectTo = req.session.redirectTo ? req.session.redirectTo : "campgrounds";
+			delete req.session.redirectTo;
+			req.flash("success", "Welcome back " + user.username);
+			res.redirect(redirectTo);
+		});
+	})(req, res, next);
 });
+
 
 
 // LOGOUT
@@ -62,12 +103,7 @@ router.get("/logout", function(req, res) {
 });
 
 
-function isLoggedIn(req, res, next) {
-	if (req.isAuthenticated()) {
-		return next();
-	}
-	res.redirect("/login");
-};
+
 
 
 module.exports = router;

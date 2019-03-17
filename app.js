@@ -22,7 +22,7 @@ app.use(express.static(__dirname+ "/public"));
 
 // seedDB();	//seed database
 
-
+app.locals.moment = require("moment");
 // PASSPORT CONFIGURATION
 app.use(require("express-session")({
 	secret: "Once again Rusty wins cutest dog",
